@@ -2,7 +2,7 @@ const Reminder = require("../models/reminder.model");
 const { successResMsg, errorResMsg } = require("../libs/response");
 const AppError = require("../libs/appError");
 
-exports.addAReminder = async (req, res, next) => {
+const addAReminder = async (req, res, next) => {
   try {
     const { user, description, date } = req.body;
     if (!user || !description) {
@@ -22,7 +22,7 @@ exports.addAReminder = async (req, res, next) => {
   }
 };
 
-exports.recieveAReminder = async (req, res, next) => {
+const recieveAReminder = async (req, res, next) => {
   try {
     const { id } = req.params;
     const aReminder = await Reminder.findOne({ _id: id });
@@ -38,7 +38,7 @@ exports.recieveAReminder = async (req, res, next) => {
   }
 };
 
-exports.getAllReminders = async (req, res, next) => {
+const getAllReminders = async (req, res, next) => {
   try {
     const allReminders = await Reminder.find();
     return successResMsg(res, 200, {
@@ -50,7 +50,7 @@ exports.getAllReminders = async (req, res, next) => {
   }
 };
 
-exports.updateAReminder = async (req, res, next) => {
+const updateAReminder = async (req, res, next) => {
   try {
     const { id } = req.params;
     const updatedReminder = await Reminder.findOneAndUpdate(
@@ -70,7 +70,7 @@ exports.updateAReminder = async (req, res, next) => {
   }
 };
 
-exports.changeSomeReminder = async (req, res, next) => {
+const changeSomeReminder = async (req, res, next) => {
   try {
     const { id } = req.params;
     const updateSomeReminderSettings = await Reminder.findOneAndUpdate(
@@ -90,7 +90,7 @@ exports.changeSomeReminder = async (req, res, next) => {
   }
 };
 
-exports.stopAReminder = async (req, res, next) => {
+const stopAReminder = async (req, res, next) => {
   try {
     const { id } = req.params;
     const stopReminder = await Reminder.findOneAndDelete({ _id: id });
@@ -103,4 +103,33 @@ exports.stopAReminder = async (req, res, next) => {
   } catch (error) {
     return errorResMsg(res, 401, "Server Error");
   }
+};
+
+const reminderByPagination = async (req, res, next) => {
+  try {
+    const { page, limit } = req.query;
+    const reminders = await Reminder.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .sort({ createdAt: 1 })
+      .exec();
+    // const offset = (page - 1) * limit;
+    // const result = reminders.slice(offset, page * limit);
+    return successResMsg(res, 200, {
+      message: "Reminder paginated successfully",
+      reminders,
+    });
+  } catch (error) {
+    return errorResMsg(res, 401, "Server Error");
+  }
+};
+
+module.exports = {
+  addAReminder,
+  recieveAReminder,
+  getAllReminders,
+  updateAReminder,
+  changeSomeReminder,
+  stopAReminder,
+  reminderByPagination,
 };
