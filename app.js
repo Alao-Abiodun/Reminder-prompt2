@@ -21,8 +21,7 @@ const reminderRoute = require("./routes/reminder.route");
 
 app.get("/", (req, res) => {
   res.status(200).json({
-    message: "This is the version one of library management system API",
-    "api-documentation_link": `<a href="https://documenter.getpostman.com/view/5643221/UVXbtefA">API-Docs</a>`,
+    message: "This is the version one of Reminder API",
   });
 });
 
