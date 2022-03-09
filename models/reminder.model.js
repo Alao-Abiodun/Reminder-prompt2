@@ -16,6 +16,9 @@ const reminderSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    images: {
+      type: String,
+    },
   },
   {
     timestamps: true,

@@ -5,6 +5,7 @@ const AppError = require("../libs/appError");
 const addAReminder = async (req, res, next) => {
   try {
     const { user, description, date } = req.body;
+    const { path } = req.file;
     if (!user || !description) {
       return next(new AppError("Please fill in the required field", 401));
     }
@@ -12,12 +13,14 @@ const addAReminder = async (req, res, next) => {
       user,
       description,
       date,
+      images: path,
     });
     return successResMsg(res, 201, {
       message: "A Reminder is created successfully",
       setReminder,
     });
   } catch (error) {
+    console.log(error.message);
     return errorResMsg(res, 401, "Server Error");
   }
 };
@@ -40,10 +43,23 @@ const recieveAReminder = async (req, res, next) => {
 
 const getAllReminders = async (req, res, next) => {
   try {
-    const allReminders = await Reminder.find();
+    const {page, limit} = req.query;
+    if (limit === null || page === null) {
+      limit = 1;
+      page = 1;
+    }
+    const allReminders = await Reminder.find()
+    .limit(limit * 1)
+    .skip((page - 1) * limit)
+    .sort({ user: -1 })
+    .exec();
+    const count = await Reminder.countDocuments();
     return successResMsg(res, 200, {
       message: "reminded fetch successfully",
       allReminders,
+      total: allReminders.length,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
     });
   } catch (error) {
     return errorResMsg(res, 401, "Server Error");
@@ -101,6 +117,7 @@ const stopAReminder = async (req, res, next) => {
       message: "Reminder updated successfully",
     });
   } catch (error) {
+    console.log(error)
     return errorResMsg(res, 401, "Server Error");
   }
 };
