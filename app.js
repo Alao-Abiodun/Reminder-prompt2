@@ -27,14 +27,7 @@ app.get("/", (req, res) => {
 app.use("/api/v1", reminderRoute);
 
 app.listen(PORT, async () => {
-  try {
-    await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-    console.log("Database is connected");
-  } catch (error) {
-    console.log(`Database Not Connected`);
-  }
+  require("./mongoDB");
+
   console.log(`The app is listening on PORT ${PORT}`);
 });

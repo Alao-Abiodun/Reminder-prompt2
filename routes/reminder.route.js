@@ -14,11 +14,11 @@ const {
 const multerForImage = require("../libs/multer");
 
 router.post("/reminder", multerForImage.single("images"), addAReminder);
-router.get("/reminders/:id", recieveAReminder);
+router.get("/reminders/:_id", recieveAReminder);
 router.get("/reminders", getAllReminders);
 router.get("/reminderByPagination", reminderByPagination);
-router.put("/reminder/:id", updateAReminder);
-router.patch("/reminder/:id", changeSomeReminder);
-router.delete("/reminders/:id/stop", stopAReminder);
+router.put("/reminder/:_id", updateAReminder);
+// router.patch("/reminder/:_id", changeSomeReminder);
+router.delete("/reminder/:_id/", stopAReminder);
 
 module.exports = router;
